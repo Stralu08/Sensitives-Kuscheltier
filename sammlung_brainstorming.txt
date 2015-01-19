@@ -1,0 +1,41 @@
+/*
+ *	Ich habe mir die Freiheit genommen, eine Textdatei zu erstellen, in die wir all unsere Ideen bzw.
+ *	auch schon eventuelle Umsetzungen schreiben können.
+ * 
+ */
+
+*******************************************************
+*************************IDEEN*************************
+*******************************************************
+
+ - Hardware
+	- Drucksenser: Interaktion mit Kuscheltier (vlt. im Arm?) (Push-to-talk?)
+	- Lautsprecher: Audioausgabe 
+	- Mikrofon: Audioeingabe (Reaktion von Teddy?, Spracherekennung?)
+	- LEDs: (vlt. in den Augen?) 
+	- Kamera: Videostreaming? Aufnehmen von Fotos?
+	- Servomotoren: Bewegung des Kopfes (oder anderen Teile wie Arme)?
+	- Aus/Reset/Sonstige Taster?
+ - Software
+	- App zum Steuern
+		- Streaming von Sounds auf den Raspberry, dieser gibt es mit Lautsprecher wieder
+		- Aufnehmen von Fotos mit der Kamera des Kuscheltiers (und eben Anzeige auf Smartphone)
+		- Streaming von Video vom Raspberry auf das Handy (vermutlich eher nicht so leicht...)
+	- Wie wird der User mit Teddy kommunizieren?
+		- Direkt (z.B. Drücken des Drucksensors)		
+		- Drahtlos
+			- Über schon erwähnte App
+			- Über Software (zur Entwicklung)?
+			- Problem: Wie erfolgt drahtlose Kommunikation?
+				- Bluetooth? (keine Ahnung wie das funktioniert)
+				- NFC (ebenfalls keine Ahnung)
+				- Infrarot (wohl eher nicht, weil das mit der Infrarotdioden schwierig umsetzbar ist,
+				  	    nicht jedes Smartphone hat Infrarotdiode (Sender), muss direkt auf Empfänger gerichtet
+					    werden, ist generell keine zuverlässige und starke Verbindung)
+				- Lokales Netzwerk (LAN)
+					- Problem: Woher kennt man IP von Raspberry?
+						- Lösung 1: statische IP, wird in verschiedenen Netzen schlecht funktionieren
+						- Lösung 2: IP von DHCP geben lassen
+							    dann sendet man von dem Gerät mit dem man auf das Kuscheltier
+							    zugreifen will eine Nachricht an alle (Broadcast)
+							    Nur Raspberry antwortet - Verbindung wird aufgebaut
