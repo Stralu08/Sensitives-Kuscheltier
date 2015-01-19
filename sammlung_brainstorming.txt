@@ -1,6 +1,6 @@
 /*
  *	Ich habe mir die Freiheit genommen, eine Textdatei zu erstellen, in die wir all unsere Ideen bzw.
- *	auch schon eventuelle Umsetzungen schreiben können.
+ *	auch schon eventuelle UmsetzungsmÃ¶glichkeiten schreiben kÃ¶nnen.
  * 
  */
 
@@ -22,20 +22,20 @@
 		- Aufnehmen von Fotos mit der Kamera des Kuscheltiers (und eben Anzeige auf Smartphone)
 		- Streaming von Video vom Raspberry auf das Handy (vermutlich eher nicht so leicht...)
 	- Wie wird der User mit Teddy kommunizieren?
-		- Direkt (z.B. Drücken des Drucksensors)		
+		- Direkt (z.B. DrÃ¼cken des Drucksensors)		
 		- Drahtlos
-			- Über schon erwähnte App
-			- Über Software (zur Entwicklung)?
+			- Ãœber schon erwÃ¤hnte App
+			- Ãœber Software (zur Entwicklung)?
 			- Problem: Wie erfolgt drahtlose Kommunikation?
 				- Bluetooth? (keine Ahnung wie das funktioniert)
 				- NFC (ebenfalls keine Ahnung)
 				- Infrarot (wohl eher nicht, weil das mit der Infrarotdioden schwierig umsetzbar ist,
-				  	    nicht jedes Smartphone hat Infrarotdiode (Sender), muss direkt auf Empfänger gerichtet
-					    werden, ist generell keine zuverlässige und starke Verbindung)
+				  	    nicht jedes Smartphone hat Infrarotdiode (Sender), muss direkt auf EmpfÃ¤nger gerichtet
+					    werden, ist generell keine zuverlÃ¤ssige und starke Verbindung)
 				- Lokales Netzwerk (LAN)
 					- Problem: Woher kennt man IP von Raspberry?
-						- Lösung 1: statische IP, wird in verschiedenen Netzen schlecht funktionieren
-						- Lösung 2: IP von DHCP geben lassen
-							    dann sendet man von dem Gerät mit dem man auf das Kuscheltier
+						- LÃ¶sung 1: statische IP, wird in verschiedenen Netzen schlecht funktionieren
+						- LÃ¶sung 2: IP von DHCP geben lassen
+							    dann sendet man von dem GerÃ¤t mit dem man auf das Kuscheltier
 							    zugreifen will eine Nachricht an alle (Broadcast)
 							    Nur Raspberry antwortet - Verbindung wird aufgebaut
