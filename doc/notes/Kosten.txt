@@ -1,0 +1,6 @@
+Kamera: 22
+Drucksensor: 10
+Lautsprecher: 20
+USB-Mikrofon: 6
+WLan-Stick: 10
+Servomotoren: 15
