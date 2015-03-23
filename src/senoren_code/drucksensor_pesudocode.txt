@@ -1,0 +1,7 @@
+GPIO.setup
+pygame.setup
+pygame.mixer.Sound(file...)
+pygame.mixer.Channel()
+while true:
+if (GPIO.input(nummer)==true)
+channel.play(sound)
