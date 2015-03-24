@@ -72,7 +72,6 @@ public class ConnectFragment extends Fragment {
         public TCPClientThread(String ip, int port) {
             this.ip = ip;
             this.port = port;
-
         }
 
         @Override
