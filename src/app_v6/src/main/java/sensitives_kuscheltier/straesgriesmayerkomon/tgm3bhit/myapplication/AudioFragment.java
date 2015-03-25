@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,10 +41,13 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
     private ListView lv;
     private List<String> list;
     private File dir;
+    private File to;
     private ArrayAdapter<String> arrayAdapter;
+    private ClientSocket socket;
 
-    public AudioFragment(Context context){
+    public AudioFragment(Context context, ClientSocket socket){
         this.context=context;
+        this.socket=socket;
     }
 
     @Override
@@ -145,7 +149,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
         rename=input;
         Log.i("Current file name", OUTPUT_FILE);
         File from = new File(OUTPUT_FILE);
-        File to   = new File(dir+ "/"+rename+ ".3ggp");
+        to   = new File(dir+ "/"+rename+ ".3ggp");
         from.renameTo(to);
 
     //    Log.i("From path is", from.toString());
@@ -228,11 +232,16 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 testname = userInput.getText().toString();
-                                if (list.contains(testname+".3ggp")) {
+                                if (list.contains(testname + ".3ggp")) {
                                     dialogExistingFile();
                                 } else {
                                     renameFile(testname);
                                     addList();
+                                    try {
+                                        socket.sendFile(to);
+                                    }catch (IOException e){
+                                        Toast.makeText(getActivity(), "Could not send File", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             }
                         })

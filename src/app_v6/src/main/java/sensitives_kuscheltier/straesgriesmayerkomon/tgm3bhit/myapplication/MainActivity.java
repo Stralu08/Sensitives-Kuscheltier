@@ -32,13 +32,23 @@ public class MainActivity extends ActionBarActivity
     private VideoFragment video;
     private AudioFragment audio;
     private ConnectFragment connection;
+    private ClientSocket socket;
+    private String hostname = "192.168.43.1";
+    private int port = 5555;
+    private int connectionState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        socket = new ClientSocket();
+        if((connectionState = socket.connect(hostname, port))==ClientSocket.CONNECTED){
+            Toast.makeText(this, "Connected!", Toast.LENGTH_SHORT);
+        }else {
+            Toast.makeText(this, "Connection failed!", Toast.LENGTH_SHORT);
+        }
         home = new HomeFragment();
         video = new VideoFragment();
-        audio = new AudioFragment(this);
+        audio = new AudioFragment(this, socket);
         connection = new ConnectFragment();
         setContentView(R.layout.activity_main);
 
@@ -56,9 +66,6 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-       /* fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();*/
 
         switch (position) {
             case 0:
