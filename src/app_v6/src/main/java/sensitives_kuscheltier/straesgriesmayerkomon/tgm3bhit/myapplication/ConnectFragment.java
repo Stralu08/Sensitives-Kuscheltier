@@ -22,9 +22,14 @@ import java.net.SocketAddress;
  */
 public class ConnectFragment extends Fragment {
 
-    private Socket socket;
     private BufferedWriter out;
     private EditText console;
+    private ClientSocket socket;
+
+    public ConnectFragment(ClientSocket socket){
+        this.socket=socket;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,7 +46,8 @@ public class ConnectFragment extends Fragment {
         int port;
         try {
             port = Integer.parseInt(connectToPort.getText().toString());
-            new TCPClientThread(ipString, port).start();
+            new TCPClientThread(socket, ipString, port).start();
+
         } catch (NumberFormatException e) {
             Log.e("MEINE APP:", e.getMessage());
         }
@@ -68,30 +74,17 @@ public class ConnectFragment extends Fragment {
 
         private String ip;
         private int port;
+        private ClientSocket socket;
 
-        public TCPClientThread(String ip, int port) {
+        public TCPClientThread(ClientSocket socket, String ip, int port) {
             this.ip = ip;
             this.port = port;
+            this.socket = socket;
         }
 
         @Override
         public void run() {
-            Looper.prepare();
-            try {
-                socket = new Socket();
-                Log.e("MEINE APP:", "IP: "+ip+"; Port: "+port);
-                SocketAddress adr = new InetSocketAddress(ip, port);
-                socket.connect(adr, 10000);
-                out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                Log.e("MEINE APP:", "Connection etablished successfully");
-                ((MainActivity)getActivity()).showToast("Connection etablished successfully!", Toast.LENGTH_SHORT);
-            } catch (IOException e) {
-                Log.e("MEINE APP:", e.getMessage());
-                ((MainActivity)getActivity()).showToast(e.getMessage(), Toast.LENGTH_SHORT);
-            } catch (IllegalArgumentException e) {
-                Log.e("MEINE APP:", "IllegalArgumentException, invalid address!");
-                ((MainActivity)getActivity()).showToast("Illegal ip/port entered", Toast.LENGTH_SHORT);
-            }
+            Log.i("app:: ","trying to connect to "+ip+"@"+port+":"+socket.connect(ip, port));
         }
     }
 }

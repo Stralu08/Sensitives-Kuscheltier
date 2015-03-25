@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,23 +34,15 @@ public class MainActivity extends ActionBarActivity
     private AudioFragment audio;
     private ConnectFragment connection;
     private ClientSocket socket;
-    private String hostname = "192.168.43.1";
-    private int port = 5555;
-    private int connectionState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         socket = new ClientSocket();
-        if((connectionState = socket.connect(hostname, port))==ClientSocket.CONNECTED){
-            Toast.makeText(this, "Connected!", Toast.LENGTH_SHORT);
-        }else {
-            Toast.makeText(this, "Connection failed!", Toast.LENGTH_SHORT);
-        }
         home = new HomeFragment();
         video = new VideoFragment();
         audio = new AudioFragment(this, socket);
-        connection = new ConnectFragment();
+        connection = new ConnectFragment(socket);
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)

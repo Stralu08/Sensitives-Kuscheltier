@@ -35,8 +35,8 @@ public class ClientSocket {
 			string_in = new BufferedReader(new InputStreamReader(raw_in));
 			string_out = new BufferedWriter(new OutputStreamWriter(raw_out));
 			return CONNECTED;
-		} catch (IOException e) {
-//			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 			return CONNECTION_FAILED;
 		}
 	}
