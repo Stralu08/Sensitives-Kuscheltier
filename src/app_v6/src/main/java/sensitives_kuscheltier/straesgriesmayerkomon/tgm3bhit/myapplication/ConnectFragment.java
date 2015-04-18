@@ -1,41 +1,32 @@
 package sensitives_kuscheltier.straesgriesmayerkomon.tgm3bhit.myapplication;
 
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 
 /**
  * Created by Patrick on 17.02.2015.
  */
 public class ConnectFragment extends Fragment {
 
-    private BufferedWriter out;
     private EditText console;
     private ClientSocket socket;
+    private TCPClientThread networkOperations;
 
-    public ConnectFragment(ClientSocket socket){
-        this.socket=socket;
+    public ConnectFragment(){
+        socket = new ClientSocket();
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_connect, container, false);
-        console = (EditText) rootView.findViewById(R.id.edit_console_log);
         return rootView;
     }
 
@@ -46,10 +37,12 @@ public class ConnectFragment extends Fragment {
         int port;
         try {
             port = Integer.parseInt(connectToPort.getText().toString());
-            new TCPClientThread(socket, ipString, port).start();
-
+            socket.destroy();
+            socket = new ClientSocket();
+            networkOperations = new TCPClientThread(socket, ipString, port);
+            networkOperations.start();
         } catch (NumberFormatException e) {
-            Log.e("MEINE APP:", e.getMessage());
+            Log.e("APP:", e.getMessage());
         }
     }
 
@@ -58,8 +51,7 @@ public class ConnectFragment extends Fragment {
             EditText editText = (EditText) getActivity().findViewById(R.id.edit_command);
             String command = editText.getText().toString();
             try {
-                out.write(command + "\n");
-                out.flush();
+                socket.sendMessage(command);
             } catch (IOException e) {
                 consoleOut("IOException in TCP ConnectionActivity, write");
             }
@@ -84,7 +76,11 @@ public class ConnectFragment extends Fragment {
 
         @Override
         public void run() {
-            Log.i("app:: ","trying to connect to "+ip+"@"+port+":"+socket.connect(ip, port));
+            Log.i("APP: ", "trying to connect to " + ip + "@" + port + ":" + socket.connect(ip, port));
         }
+    }
+
+    public ClientSocket getClientSocket(){
+        return socket;
     }
 }

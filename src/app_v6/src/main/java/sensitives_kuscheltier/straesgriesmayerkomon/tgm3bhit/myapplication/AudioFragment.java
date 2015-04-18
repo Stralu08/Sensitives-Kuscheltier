@@ -238,8 +238,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
                                     renameFile(testname);
                                     addList();
                                     try {
-                                        socket.sendMessage("push "+to.toString()+" "+rename);
-                                        socket.sendFile(to);
+                                        socket.sendFile(to, rename);
                                     }catch (Exception e){
                                         Toast.makeText(getActivity(), "Could not send File", Toast.LENGTH_SHORT).show();
                                     }

@@ -33,16 +33,14 @@ public class MainActivity extends ActionBarActivity
     private VideoFragment video;
     private AudioFragment audio;
     private ConnectFragment connection;
-    private ClientSocket socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        socket = new ClientSocket();
         home = new HomeFragment();
         video = new VideoFragment();
-        audio = new AudioFragment(this, socket);
-        connection = new ConnectFragment(socket);
+        connection = new ConnectFragment();
+        audio = new AudioFragment(this, connection.getClientSocket());
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
