@@ -55,7 +55,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_audio, container, false);
         createDirIfNotExists("Audiofiles");
-        OUTPUT_FILE= dir+"/"+rename+".3ggp";
+        OUTPUT_FILE= dir+"/"+rename+".3gp";
         Button button = (Button)rootView.findViewById(R.id.button2);
         button.setOnTouchListener(this);
         lv =(ListView)rootView.findViewById(R.id.listView);
@@ -149,7 +149,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
         rename=input;
         Log.i("Current file name", OUTPUT_FILE);
         File from = new File(OUTPUT_FILE);
-        to   = new File(dir+ "/"+rename+ ".3ggp");
+        to   = new File(dir+ "/"+rename+ ".3gp");
         from.renameTo(to);
 
     //    Log.i("From path is", from.toString());
@@ -232,7 +232,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 testname = userInput.getText().toString();
-                                if (list.contains(testname + ".3ggp")) {
+                                if (list.contains(testname + ".3gp")) {
                                     dialogExistingFile();
                                 } else {
                                     renameFile(testname);
@@ -278,7 +278,12 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
                             public void onClick(DialogInterface dialog,int id) {
                                 dialog.cancel();
                             }
-                        });
+                        })
+                .setNeutralButton("Umbenennen",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialogSetName();
+                            }});
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
