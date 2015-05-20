@@ -8,6 +8,8 @@ import socket
 
 
 DEFAULT_MODE = "wb+"
+DEFAULT_AUDIO_PATH = '/home/pi/project/sounds'
+DEFAULT_PHOTO_PATH = '/home/pi/project/photos'
 
 
 def receive_file(name, server_socket, data_length):
@@ -32,12 +34,29 @@ def receive_file(name, server_socket, data_length):
     data_per_chunk = Constants.DEFAULT_DATA_PER_CHUNK
     logging.info("Starting transfer...")
     while data_received < data_length:
-        data = server_socket.receive(decoded=False,length=data_per_chunk)
+        data = server_socket.receive(decoded=False, length=data_per_chunk)
         new_file.write(data)
         data_received += data_per_chunk
         logging.info("received "+str(data_received)+" bytes (powers of 2)")
     logging.info("transfer completed!")
     new_file.close()
+
+
+def send_file(name, server_socket, dir=DEFAULT_PHOTO_PATH):
+    to_send = open(name, DEFAULT_MODE)
+    logging.info("Opened file")
+    file_size = os.path.getsize(dir+"/"+name)
+    server_socket.send(str(file_size), encoded=True)
+    bytes_sent = 0
+    logging.info("Size: "+str(file_size))
+    while bytes_sent < file_size:
+        data = to_send.read(Constants.DEFAULT_DATA_PER_CHUNK)
+        logging.info("Current file position: "+str(to_send.tell()))
+        server_socket.send(data, encoded=False)
+        bytes_sent += Constants.DEFAULT_DATA_PER_CHUNK
+    logging.info("Transfer completed!")
+    to_send.close()
+    logging.info("Closed file")
 
 
 def list_files():

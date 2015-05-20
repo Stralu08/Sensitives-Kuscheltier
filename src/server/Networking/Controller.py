@@ -35,6 +35,8 @@ class Controller(object):
                 logging.warning("too less args")
         elif parts[0] == Constants.LIST_FILES:
             self.server.send(Files.list_files())
+        elif parts[0] == "take photo":
+            Files.send_file("lol.txt")
 
     def start(self):
         """ Starts listening for clients, receives messages
