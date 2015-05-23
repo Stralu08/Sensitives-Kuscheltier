@@ -2,7 +2,6 @@ __author__ = "Patrick Komon"
 
 import socket
 import logging
-import Constants
 
 
 class ServerSocket(object):
@@ -21,6 +20,7 @@ class ServerSocket(object):
     """
     DEFAULT_PORT = 5555
     DEFAULT_BACKLOG = 0
+    DEFAULT_DATA_PER_CHUNK = 4096
 
     def __init__(self):
         """ Constructs a new socket with protocol family socket.AF_INIT
@@ -52,7 +52,7 @@ class ServerSocket(object):
         logging.info("Connected client: "+str(address[0])+"@"+str(address[1]))
         return self.connected_socket
 
-    def receive(self, decoded=True, length=Constants.DEFAULT_DATA_PER_CHUNK):
+    def receive(self, decoded=True, length=DEFAULT_DATA_PER_CHUNK):
         """ Receives a message from the connected client
         :param decoded: if the message should be decoded after receiving or not
         :param length: the length of the message in bytes
