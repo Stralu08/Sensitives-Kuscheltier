@@ -6,7 +6,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +30,8 @@ public class MainActivity extends ActionBarActivity
 
     private HomeFragment home;
     private VideoFragment video;
-    private AudioFragment audio;
+    //private AudioFragment audio;
+    private NewAudioFragment audio;
     private ConnectFragment connection;
 
     @Override
@@ -40,7 +40,9 @@ public class MainActivity extends ActionBarActivity
         home = new HomeFragment();
         video = new VideoFragment();
         connection = new ConnectFragment();
-        audio = new AudioFragment(this, connection.getClientSocket());
+        //audio = new AudioFragment(this);
+        audio = new NewAudioFragment();
+        audio.setConnection(connection);
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -57,7 +59,6 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-
         switch (position) {
             case 0:
                 fragmentManager.beginTransaction()
@@ -84,7 +85,6 @@ public class MainActivity extends ActionBarActivity
                 mTitle = getString(R.string.title_connect);
                 break;
         }
-
     }
 
     public void onSectionAttached(int number) {
@@ -142,10 +142,6 @@ public class MainActivity extends ActionBarActivity
     public void onWriteClick(View v) {
         connection.write();
     }
-
-    public void onPlayClick(View v) throws Exception { audio.playRecording();}
-
-    public void onDeleteFile(View v) {audio.removeFile();}
 
     public static class HomeFragment extends Fragment {
         @Override

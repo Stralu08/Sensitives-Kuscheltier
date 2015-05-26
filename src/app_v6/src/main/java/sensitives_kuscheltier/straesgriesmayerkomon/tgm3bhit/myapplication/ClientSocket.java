@@ -40,7 +40,6 @@ public class ClientSocket {
             string_out = new BufferedWriter(new OutputStreamWriter(raw_out));
             return CONNECTED;
         } catch (IOException e) {
-            // e.printStackTrace();
             return CONNECTION_FAILED;
         }
     }
@@ -57,7 +56,7 @@ public class ClientSocket {
     public void sendFile(File fileToSend, String name) throws IOException {
         int length = (int) fileToSend.length();
         sendMessage("push " + fileToSend + " " + name + " " + length);
-        int dataPerChunk = 1024;
+        int dataPerChunk = 4096;
         byte[] buf = new byte[length];
         BufferedInputStream fileInputStream = new BufferedInputStream(
                 new FileInputStream(fileToSend));

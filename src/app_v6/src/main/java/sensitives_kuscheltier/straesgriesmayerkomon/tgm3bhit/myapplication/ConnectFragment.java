@@ -37,7 +37,6 @@ public class ConnectFragment extends Fragment {
         int port;
         try {
             port = Integer.parseInt(connectToPort.getText().toString());
-            socket.destroy();
             socket = new ClientSocket();
             networkOperations = new TCPClientThread(socket, ipString, port);
             networkOperations.start();

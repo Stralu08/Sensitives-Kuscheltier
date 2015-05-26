@@ -28,13 +28,15 @@ import java.util.List;
 
 /**
  * Created by Jakob on 16.03.2015.
+ * not in use anymore :(
  */
 public class AudioFragment extends Fragment implements View.OnTouchListener,AdapterView.OnItemClickListener{
+
+    private ConnectFragment connection;
     private MediaPlayer mediaPlayer;
     private MediaRecorder recorder;
     private String OUTPUT_FILE;
     private String rename="file";
-    private String testname;
     private String filename;
     private String selectedItem;
     public Context context;
@@ -43,11 +45,9 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
     private File dir;
     private File to;
     private ArrayAdapter<String> arrayAdapter;
-    private ClientSocket socket;
 
-    public AudioFragment(Context context, ClientSocket socket){
+    public AudioFragment(Context context){
         this.context=context;
-        this.socket=socket;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
         View rootView = inflater.inflate(R.layout.layout_audio, container, false);
         createDirIfNotExists("Audiofiles");
         OUTPUT_FILE= dir+"/"+rename+".3gp";
-        Button button = (Button)rootView.findViewById(R.id.button2);
+        Button button = (Button)rootView.findViewById(R.id.recordButton);
         button.setOnTouchListener(this);
         lv =(ListView)rootView.findViewById(R.id.listView);
         lv.setOnItemClickListener(this);
@@ -81,15 +81,13 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
         //    Toast.makeText(getActivity(), "ABSPIELEN", Toast.LENGTH_SHORT).show();
         }catch(Exception e){
             Toast.makeText(getActivity(), "Kein File ausgewählt!", Toast.LENGTH_SHORT).show();
-
         }
     }
     public void ditchMediaPlayer() {
         if(mediaPlayer != null){
             try{
                 mediaPlayer.release();
-            }catch (Exception e)
-            {
+            }catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -231,14 +229,14 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                testname = userInput.getText().toString();
-                                if (list.contains(testname + ".3gp")) {
-                                    dialogExistingFile();
+                                String name = userInput.getText().toString();
+                                if (list.contains(name + ".3gp")) {
+                                    dialogExistingFile(name);
                                 } else {
-                                    renameFile(testname);
+                                    renameFile(name);
                                     addList();
                                     try {
-                                        socket.sendFile(to, rename);
+                                        connection.getClientSocket().sendFile(to, name);
                                     }catch (Exception e){
                                         Toast.makeText(getActivity(), "Could not send File", Toast.LENGTH_SHORT).show();
                                     }
@@ -259,7 +257,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
     /**
      * Alert Dialog. Shows if the name of the file you want to save is already existing.
      */
-    public void dialogExistingFile() {
+    public void dialogExistingFile(final String name) {
         LayoutInflater li = LayoutInflater.from(context);
         View promptsView = li.inflate(R.layout.layout_audio_dialog_v2, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -269,7 +267,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                renameFile(testname);
+                                renameFile(name);
                                 addList();
                             }
                         })
@@ -299,6 +297,10 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
          selectedItem = lv.getAdapter().getItem(position).toString();
     //     Toast.makeText(getActivity(), ""+selectedItem, Toast.LENGTH_SHORT).show();
+    }
+
+    public void setConnection(ConnectFragment connection){
+        this.connection = connection;
     }
 }
 

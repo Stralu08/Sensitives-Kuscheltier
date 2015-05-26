@@ -10,7 +10,7 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name der Datei: "
+        android:text="Name der Datei (Achtung: wenn der Name schon vorhanden ist, wird die Datei überschrieben!): "
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
