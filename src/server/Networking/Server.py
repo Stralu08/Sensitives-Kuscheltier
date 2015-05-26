@@ -26,7 +26,6 @@ class ServerSocket(object):
         """ Constructs a new socket with protocol family socket.AF_INIT
             and mode socket.SOCK_STREAM
         """
-        logging.basicConfig(level=logging.DEBUG)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         logging.info("Created server socket")
         self.connected_socket = None

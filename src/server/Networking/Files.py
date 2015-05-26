@@ -5,8 +5,8 @@ import logging
 import os
 
 DEFAULT_MODE = "wb+"
-DEFAULT_AUDIO_PATH = '/home/pi/project/sounds'
-DEFAULT_PHOTO_PATH = '/home/pi/project/photos'
+DEFAULT_AUDIO_PATH = '/home/pi/projekt/sounds'
+DEFAULT_PHOTO_PATH = '/home/pi/projekt/photos'
 
 
 def receive_file(name, server_socket, data_length):
@@ -59,7 +59,7 @@ def send_file(name, server_socket, dir=DEFAULT_PHOTO_PATH):
 def list_files():
     """ At the moment this method is not really useful!
     Checks directory and returns the names of the files inside it.
-    :return: al list of all files in the sound folder
+    :return: al list of all files in the sounds folder
     """
     dir_list = os.listdir("C:\Users\Patrick\PycharmProjects\Networking\sound")
     dir_list_string = ""

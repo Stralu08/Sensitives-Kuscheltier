@@ -33,6 +33,7 @@ public class MainActivity extends ActionBarActivity
     //private AudioFragment audio;
     private NewAudioFragment audio;
     private ConnectFragment connection;
+    private BabyfonFragment babyfon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,8 @@ public class MainActivity extends ActionBarActivity
         //audio = new AudioFragment(this);
         audio = new NewAudioFragment();
         audio.setConnection(connection);
+        babyfon = new BabyfonFragment();
+        babyfon.setConnection(connection);
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -80,6 +83,12 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 3:
                 fragmentManager.beginTransaction()
+                        .replace(R.id.container, babyfon)
+                        .commit();
+                mTitle = getString(R.string.title_babyfon);
+                break;
+            case 4:
+                fragmentManager.beginTransaction()
                         .replace(R.id.container, connection)
                         .commit();
                 mTitle = getString(R.string.title_connect);
@@ -89,14 +98,20 @@ public class MainActivity extends ActionBarActivity
 
     public void onSectionAttached(int number) {
         switch (number) {
-            case 1:
+            case 0:
                 mTitle = getString(R.string.title_home);
                 break;
-            case 2:
+            case 1:
                 mTitle = getString(R.string.title_video);
                 break;
-            case 3:
+            case 2:
                 mTitle = getString(R.string.title_audio);
+                break;
+            case 3:
+                mTitle = getString(R.string.title_babyfon);
+                break;
+            case 4:
+                mTitle = getString(R.string.title_connect);
                 break;
         }
     }

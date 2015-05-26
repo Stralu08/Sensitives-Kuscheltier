@@ -2,6 +2,7 @@ __author__ = 'Patrick Komon'
 
 import logging
 import pygame.mixer
+# NOT USED!!!
 
 
 def playback(sound_file):

@@ -17,7 +17,8 @@ import java.net.Socket;
 
 public class ClientSocket {
 
-    public static final int DEFAULT_TIMEOUT = 10000;
+    private static final int DATA_PER_CHUNK = 4096;
+    private static final int DEFAULT_TIMEOUT = 5000;
     public static final int CONNECTED = 0;
     public static final int CONNECTION_FAILED = 1;
 
@@ -33,7 +34,7 @@ public class ClientSocket {
 
     public int connect(String host, int port) {
         try {
-            client.connect(new InetSocketAddress(host, port), 10000);
+            client.connect(new InetSocketAddress(host, port), DEFAULT_TIMEOUT);
             raw_in = client.getInputStream();
             raw_out = client.getOutputStream();
             string_in = new BufferedReader(new InputStreamReader(raw_in));
@@ -56,20 +57,19 @@ public class ClientSocket {
     public void sendFile(File fileToSend, String name) throws IOException {
         int length = (int) fileToSend.length();
         sendMessage("push " + fileToSend + " " + name + " " + length);
-        int dataPerChunk = 4096;
         byte[] buf = new byte[length];
         BufferedInputStream fileInputStream = new BufferedInputStream(
                 new FileInputStream(fileToSend));
-        for (int sent = 0; sent <= length; sent += dataPerChunk) {
-            if (length - sent < dataPerChunk) {
+        for (int sent = 0; sent <= length; sent += DATA_PER_CHUNK) {
+            if (length - sent < DATA_PER_CHUNK) {
                 fileInputStream.read(buf, sent, length - sent);
                 raw_out.write(buf, sent, length - sent);
             } else {
-                fileInputStream.read(buf, sent, dataPerChunk);
-                raw_out.write(buf, sent, dataPerChunk);
+                fileInputStream.read(buf, sent, DATA_PER_CHUNK);
+                raw_out.write(buf, sent, DATA_PER_CHUNK);
             }
 
-            Log.d("APP", "sent: " + sent + "; data per chunk: " + dataPerChunk + "; length: " + length);
+            Log.d("APP", "sent: " + sent + "; data per chunk: " + DATA_PER_CHUNK + "; length: " + length);
 
             raw_out.flush();
         }
@@ -84,19 +84,22 @@ public class ClientSocket {
         return client.isConnected();
     }
 
-    public boolean isClosed() {
-        return client.isClosed();
-    }
 
     public void destroy() {
         try {
-            raw_in.close();
-            raw_out.close();
-            string_in.close();
-            string_out.close();
+            client.shutdownInput();
+            client.shutdownOutput();
             client.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public InputStream getRaw_in() {
+        return raw_in;
+    }
+
+    public OutputStream getRaw_out() {
+        return raw_out;
     }
 }

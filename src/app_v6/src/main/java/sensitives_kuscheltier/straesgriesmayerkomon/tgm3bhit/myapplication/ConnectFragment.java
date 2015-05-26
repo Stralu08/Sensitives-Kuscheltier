@@ -1,21 +1,23 @@
 package sensitives_kuscheltier.straesgriesmayerkomon.tgm3bhit.myapplication;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.IOException;
 
+
 /**
- * Created by Patrick on 17.02.2015.
+ * Created by Patrick, 17.02.2015.
  */
 public class ConnectFragment extends Fragment {
 
-    private EditText console;
     private ClientSocket socket;
     private TCPClientThread networkOperations;
 
@@ -30,12 +32,14 @@ public class ConnectFragment extends Fragment {
         return rootView;
     }
 
-    public void connect(){
+    public void connect() {
         EditText connectToIP = (EditText) getView().findViewById(R.id.edit_ip);
         EditText connectToPort = (EditText) getView().findViewById(R.id.edit_port);
         String ipString = connectToIP.getText().toString();
         int port;
         try {
+            if (socket != null && !socket.isConnected())
+                socket.destroy();
             port = Integer.parseInt(connectToPort.getText().toString());
             socket = new ClientSocket();
             networkOperations = new TCPClientThread(socket, ipString, port);
@@ -52,13 +56,9 @@ public class ConnectFragment extends Fragment {
             try {
                 socket.sendMessage(command);
             } catch (IOException e) {
-                consoleOut("IOException in TCP ConnectionActivity, write");
+                Log.i("APP: ", "unable to write: IOException");
             }
         }
-    }
-
-    private void consoleOut(String s) {
-        console.getText().append(s + "\n");
     }
 
     public class TCPClientThread extends Thread {
@@ -75,7 +75,25 @@ public class ConnectFragment extends Fragment {
 
         @Override
         public void run() {
-            Log.i("APP: ", "trying to connect to " + ip + "@" + port + ":" + socket.connect(ip, port));
+            Log.i("APP: ", "trying to connect to " + ip + "@" + port);
+            int success = socket.connect(ip, port);
+            Looper.prepare();
+            if (success == ClientSocket.CONNECTED) {
+                Log.i("APP: ", "connection successfully established");
+                toastOnUiThread("Verbunden!", Toast.LENGTH_SHORT);
+            } else {
+                Log.i("APP: ", "connection failed");
+                toastOnUiThread("Verbinden fehlgeschlagen!", Toast.LENGTH_SHORT);
+            }
+        }
+
+        private void toastOnUiThread(final String msg, final int length){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getActivity(), msg, length).show();
+                }
+            });
         }
     }
 

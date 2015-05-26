@@ -8,17 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Patrick on 25.05.2015.
+ * Created by Patrick, 25.05.2015.
  */
 public class SoundArrayAdapter extends ArrayAdapter<Sound> {
 
     private final Context context;
     private List<Sound> values;
-    private ArrayList<Integer> colors;
 
     public SoundArrayAdapter(Context context, List<Sound> values){
         super(context, -1, values);
@@ -40,7 +38,8 @@ public class SoundArrayAdapter extends ArrayAdapter<Sound> {
             state.setText("[ausständig]");
             state.setTextColor(Color.RED);
         }
-        row.setBackgroundColor(Color.rgb((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255)));
+        //row.setBackgroundColor(Color.rgb((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255)));
+        // ??? vielleicht, vielleicht auch nicht...
         return row;
     }
 }

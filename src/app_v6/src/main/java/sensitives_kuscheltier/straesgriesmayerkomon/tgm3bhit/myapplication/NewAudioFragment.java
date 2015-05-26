@@ -187,7 +187,7 @@ public class NewAudioFragment extends android.support.v4.app.Fragment{
                         Log.i("APP: ", "Added sound '" + newSound + "' to list");
                         try {
                             connection.getClientSocket().sendFile(newSound.getSource(),
-                                    newSound.toString());
+                                    "sounds/"+newSound.toString());
                             newSound.setUploaded(true);
                         }catch (Exception e){
                             Toast.makeText(getActivity(), "Sound konnte nicht gesendet werden", Toast.LENGTH_SHORT).show();

@@ -4,6 +4,7 @@ import Server
 import Audio
 import Files
 import logging
+import GPIOInputCallbacks
 
 
 class Controller(object):
@@ -59,5 +60,7 @@ class Controller(object):
                     break
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    GPIOInputCallbacks.setup()
     control = Controller()
     control.start()
