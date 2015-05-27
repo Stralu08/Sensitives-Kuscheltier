@@ -50,7 +50,7 @@ def send_file(name, server_socket, dir=DEFAULT_PHOTO_PATH):
         data = to_send.read(Server.ServerSocket.DEFAULT_DATA_PER_CHUNK)
         logging.info("Current file position: "+str(to_send.tell()))
         server_socket.send(data, encoded=False)
-        #bytes_sent += !!!!!
+        bytes_sent += len(data)
     logging.info("Transfer completed!")
     to_send.close()
     logging.info("Closed file")

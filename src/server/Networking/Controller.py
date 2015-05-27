@@ -4,6 +4,7 @@ import Server
 import Audio
 import Files
 import logging
+import thread
 import GPIOInputCallbacks
 
 
@@ -44,6 +45,10 @@ class Controller(object):
                 logging.warning("too less args")
         elif parts[0] == Controller.LIST_FILES:
             self.server.send(Files.list_files())
+        elif parts[0] == "start" and parts[1] == "babyfon":
+            thread.start_new_thread(Audio.startBabyfon)
+
+
 
     def start(self):
         """ Starts listening for clients, receives messages

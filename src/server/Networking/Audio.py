@@ -1,30 +1,53 @@
-__author__ = 'Patrick Komon'
+__author__ = 'Lukas Mayer'
+import audioop
+import pyaudio
+import os
+#import Files
 
-import logging
-import pygame.mixer
-# NOT USED!!!
+#TEMP_FILENAME = "/home/pi/projekt/aufnahmen/record.temp"
+TEMP_FILENAME = "lol.wav"
 
-
-def playback(sound_file):
-    """ Plays back an audio file using pygame
-    (supported type - look at the pygame website)
-    :param sound_file: the audio file
-    :return:
-    """
-    pygame.mixer.init(32000, -16, 2)  #TODO
-    channel = pygame.mixer.Channel(1)
-    try:
-        sound = pygame.mixer.Sound(sound_file)
-    except IOError:
-        logging.error("Error: file not found! aborting function")
-        return
-    logging.info("Starting playback...")
-    channel.play(sound)
+DEFAULT_DURATION = 5
+#DEFAULT_THRESHOLD = 1000
+DEFAULT_THRESHOLD = 1500
+babyfonStarted = False
 
 
-def stop_playback():
-    """ Stops any audio playback (using pygame)
-    :return:
-    """
-    logging.info("Stopping playback...")
-    pygame.mixer.stop()
+def getLautstaerke():
+    chunk = 1024
+    p = pyaudio.PyAudio()
+    stream = p.open(format=pyaudio.paInt16,
+                    channels=1,
+                    rate=44100,
+                    input=True,
+                    frames_per_buffer=chunk)
+    data = stream.read(chunk)
+    return audioop.rms(data, 2)
+
+
+def record(filename=TEMP_FILENAME, duration=DEFAULT_DURATION):
+    os.system("arecord " + str(filename) + " -d " + str(duration))
+
+
+def checkLautstaerke():
+    while getLautstaerke() < DEFAULT_THRESHOLD:
+        pass
+    record()
+
+
+def startBabyfon():
+    global babyfonStarted
+    babyfonStarted = True
+    while babyfonStarted:
+        checkLautstaerke()
+        #Files.send_file(TEMP_FILENAME)
+
+
+def stopBabyfon():
+    global babyfonStarted
+    babyfonStarted = False
+
+
+#Testing am RPi
+
+checkLautstaerke()
