@@ -14,6 +14,10 @@ servo_freq = 50
 gassensor = 22
 rgbLED = {'r': 11, 'g': 13, 'b': 15}
 
+min_rotation = 2.5
+max_rotation = 12.5
+rotation = 7.5
+
 
 def setup():
     logging.info("Setting up GPIO pins...")
@@ -63,3 +67,13 @@ def gassensor_callback(channel):
 def taster_shutdown_callback(channel):
     logging.info("Shutdown button pressed")
     os.system("shutdown -h now")
+
+
+def motor_control(direction):
+    global rotation
+    if direction is "r" and rotation >= 2.5:
+        rotation += 0.5
+    if direction is "l" and rotation <= 12.5:
+        rotation -= 0.5
+    servo_pwm.changeDutyCycle(rotation)
+

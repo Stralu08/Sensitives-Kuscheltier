@@ -2,10 +2,13 @@ __author__ = 'Lukas Mayer'
 import audioop
 import pyaudio
 import os
+import picamera
+import time
 #import Files
 
-#TEMP_FILENAME = "/home/pi/projekt/aufnahmen/record.temp"
-TEMP_FILENAME = "lol.wav"
+#TEMP_FILENAME = "/home/pi/projekt/htdocs/aufnahmen/record.temp"
+TEMP_FILENAME_SOUND = "lol.wav"
+TEMP_FILENAME_PHOTO = "/home/pi/projekt/htdocs/fotos"
 
 DEFAULT_DURATION = 5
 #DEFAULT_THRESHOLD = 1000
@@ -25,7 +28,7 @@ def getLautstaerke():
     return audioop.rms(data, 2)
 
 
-def record(filename=TEMP_FILENAME, duration=DEFAULT_DURATION):
+def record(filename=TEMP_FILENAME_SOUND, duration=DEFAULT_DURATION):
     os.system("arecord " + str(filename) + " -d " + str(duration))
 
 
@@ -48,6 +51,7 @@ def stopBabyfon():
     babyfonStarted = False
 
 
-#Testing am RPi
-
-checkLautstaerke()
+def take_photo():
+    cam = picamera.PiCamera()
+    cam.capture(TEMP_FILENAME_PHOTO+'/'+str(time.time())+'.jpg')
+    return TEMP_FILENAME_PHOTO+'/'+str(time.time())+'.jpg'
