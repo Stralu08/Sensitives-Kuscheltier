@@ -4,6 +4,7 @@ import pyaudio
 import os
 import picamera
 import time
+import logging
 #import Files
 
 #TEMP_FILENAME = "/home/pi/projekt/htdocs/aufnahmen/record.temp"
@@ -29,7 +30,7 @@ def getLautstaerke():
 
 
 def record(filename=TEMP_FILENAME_SOUND, duration=DEFAULT_DURATION):
-    os.system("arecord " + str(filename) + " -d " + str(duration))
+    os.system("arecord " + str(filename) + " -d " + str(duration)) #TODO recording while recording? -> sleep 5 sec?
 
 
 def checkLautstaerke():
@@ -39,19 +40,25 @@ def checkLautstaerke():
 
 
 def startBabyfon():
+    logging.info("starting babyfone ...")
     global babyfonStarted
     babyfonStarted = True
     while babyfonStarted:
         checkLautstaerke()
         #Files.send_file(TEMP_FILENAME)
+    logging.info("stopped babyfon")
 
 
 def stopBabyfon():
+    logging.info("stopping babyfon ...")
     global babyfonStarted
     babyfonStarted = False
 
 
 def take_photo():
+    logging.info("taking photo...")
     cam = picamera.PiCamera()
-    cam.capture(TEMP_FILENAME_PHOTO+'/'+str(time.time())+'.jpg')
-    return TEMP_FILENAME_PHOTO+'/'+str(time.time())+'.jpg'
+    path = TEMP_FILENAME_PHOTO+'/'+str(time.time())+".jpg"
+    cam.capture(path)
+    logging.info("saved photo: "+path)
+    return path

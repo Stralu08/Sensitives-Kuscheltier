@@ -33,27 +33,28 @@ class Controller(object):
         parts = msg.split(" ")
         if parts[0] == Controller.AUDIO_PLAYBACK:
             if len(parts) > 1:
-                #Audio.playback(parts[1])
+                #Audio.playback(parts[1]) TODO
                 pass
             else:
                 logging.warning("too less args")
         elif parts[0] == Controller.STOP_AUDIO_PLAYBACK:
-            #Audio.stop_playback()
+            #Audio.stop_playback() TODO
             pass
         elif parts[0] == Controller.PUSH_FILE:
             if len(parts) > 3:
                 Files.receive_file(parts[2], self.server, int(parts[3]))
             else:
-                logging.warning("too less args")
+                logging.warning("push request: too less args")
         elif parts[0] == Controller.LIST_FILES:
             self.server.send(Files.list_files())
         elif parts[0] == "start" and len(parts) > 1 and parts[1] == "babyfon":
             thread.start_new_thread(Media.startBabyfon)
         elif parts[0] == "takephoto":
-            Media.take_photo()
-            #TODO
+            path = Media.take_photo()
+            self.server.send(path)
         elif parts[0] == "rotate" and len(parts) > 1:
             GPIOInputCallbacks.motor_control(parts[1])
+
 
     def start(self):
         """ Starts listening for clients, receives messages
