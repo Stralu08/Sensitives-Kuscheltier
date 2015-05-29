@@ -10,9 +10,14 @@ import java.io.File;
  */
 public class Sound {
 
+    public static final int UNCHECKABLE = -1;
+    public static final int NOT_SYNCHED = -2;
+    public static final int SYNCHED = 1;
+
+
     private File source;
     private MediaPlayer mediaPlayer;
-    private boolean uploaded;
+    private int synchState;
 
     public Sound(File source){
         this.source = source;
@@ -48,8 +53,8 @@ public class Sound {
         source = newFile;
     }
 
-    public void setUploaded(boolean b){
-        this.uploaded = b;
+    public void setSynchState(int synchState){
+        this.synchState = synchState;
     }
 
     public boolean delete(){
@@ -60,8 +65,8 @@ public class Sound {
         return source;
     }
 
-    public boolean isUploaded(){
-        return uploaded;
+    public int getSynchState(){
+        return synchState;
     }
 
     @Override
@@ -71,8 +76,6 @@ public class Sound {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Sound))
-            return false;
-        return toString().equals(o.toString());
+        return o instanceof Sound && toString().equals(o.toString());
     }
 }

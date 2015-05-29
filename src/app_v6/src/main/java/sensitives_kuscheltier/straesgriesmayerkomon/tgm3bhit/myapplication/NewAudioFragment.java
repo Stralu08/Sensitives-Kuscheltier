@@ -12,7 +12,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -31,8 +30,9 @@ public class NewAudioFragment extends android.support.v4.app.Fragment{
 
     public static final String AUDIO_FILES_DIR = Environment.getExternalStorageDirectory() +"/audiofiles";
     public static final String TEMPORARY_OUTPUT_FILE = AUDIO_FILES_DIR+"/recording.temp";
+    public static final String REMOTE_SOUND_PATH = "/home/pi/projekt/sounds";
 
-    private ConnectFragment connection;
+    //private ConnectFragment connection;
     private List<Sound> sounds;
     //private ArrayAdapter<Sound> arrayAdapter;
     private SoundArrayAdapter arrayAdapter;
@@ -41,6 +41,8 @@ public class NewAudioFragment extends android.support.v4.app.Fragment{
     private ListView listView;
 
     private MediaRecorder recorder;
+
+    private ClientSocket socket;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,6 +61,8 @@ public class NewAudioFragment extends android.support.v4.app.Fragment{
         listView.setAdapter(arrayAdapter);
         createDirIfNotExists(new File(AUDIO_FILES_DIR));
         refreshList();
+        socket = ((MainActivity)getActivity()).getClientSocket();
+        checkFilesOnPi();
         return rootView;
     }
 
@@ -73,9 +77,9 @@ public class NewAudioFragment extends android.support.v4.app.Fragment{
         }
     }
 
-    public void setConnection(ConnectFragment connection){
-        this.connection = connection;
-    }
+    //public void setConnection(ConnectFragment connection){
+    //    this.connection = connection;
+    //}
 
     private void startRecording() throws IOException{
         Log.i("APP: ", "Start recording...");
@@ -133,6 +137,34 @@ public class NewAudioFragment extends android.support.v4.app.Fragment{
         alertDialog.show();
     }
 
+    private void checkFilesOnPi(){
+        new Thread(){
+            @Override
+            public void run() {
+                if(socket==null || !socket.isConnected()){
+                    for(Sound s: sounds) {
+                        s.setSynchState(Sound.UNCHECKABLE);
+                    }
+                }else {
+                    for(Sound s: sounds){
+                        boolean exists = socket.existsFile(REMOTE_SOUND_PATH+"/"+s);
+                        if(exists){
+                            s.setSynchState(Sound.SYNCHED);
+                        } else {
+                            s.setSynchState(Sound.NOT_SYNCHED);
+                        }
+                    }
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }.start();
+    }
+
     private class ItemClickHandler implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -186,12 +218,13 @@ public class NewAudioFragment extends android.support.v4.app.Fragment{
                         arrayAdapter.notifyDataSetChanged();
                         Log.i("APP: ", "Added sound '" + newSound + "' to list");
                         try {
-                            connection.getClientSocket().sendFile(newSound.getSource(),
-                                    "sounds/"+newSound.toString());
-                            newSound.setUploaded(true);
-                        }catch (Exception e){
+                            socket.sendFile(newSound.getSource(),
+                                    REMOTE_SOUND_PATH+"/"+newSound.toString());
+                            newSound.setSynchState(Sound.SYNCHED);
+                        }catch (IOException e){
                             Toast.makeText(getActivity(), "Sound konnte nicht gesendet werden", Toast.LENGTH_SHORT).show();
-                            newSound.setUploaded(false);
+                            newSound.setSynchState(Sound.NOT_SYNCHED);
+                            e.printStackTrace();
                         }
                     } else {
                         Toast.makeText(getActivity(), "Bitte einen Namen eingeben", Toast.LENGTH_SHORT).show();

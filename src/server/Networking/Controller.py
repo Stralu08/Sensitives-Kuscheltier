@@ -23,7 +23,7 @@ class Controller(object):
         :return: a default Controller object
         """
         self.server = Server.ServerSocket()
-        self.server.prepare()
+        self.server.prepare(hostname="192.168.43.1")
 
     def handle_command(self, msg):
         """ Reacts to a message
@@ -54,7 +54,11 @@ class Controller(object):
             self.server.send(path)
         elif parts[0] == "rotate" and len(parts) > 1:
             GPIOInputCallbacks.motor_control(parts[1])
-
+        elif parts[0] == "exists" and len(parts) > 1:
+            if Files.exists(parts[1]):
+                self.server.send("yes\n")
+            else:
+                self.server.send("no\n")
 
     def start(self):
         """ Starts listening for clients, receives messages

@@ -56,6 +56,10 @@ def send_file(name, server_socket, dir=DEFAULT_PHOTO_PATH):
     logging.info("Closed file")
 
 
+def exists(path):
+    return os.path.isfile(path)
+
+
 def list_files():
     """ At the moment this method is not really useful!
     Checks directory and returns the names of the files inside it.

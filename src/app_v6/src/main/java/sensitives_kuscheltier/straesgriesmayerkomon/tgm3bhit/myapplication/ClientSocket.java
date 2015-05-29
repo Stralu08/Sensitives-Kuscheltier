@@ -46,7 +46,7 @@ public class ClientSocket {
     }
 
     public void sendMessage(String s) throws IOException {
-        string_out.write(s);
+        string_out.write(s+";");
         string_out.flush();
     }
 
@@ -78,6 +78,20 @@ public class ClientSocket {
 
     public void sendFile(String fileToSend, String name) throws IOException {
         sendFile(new File(fileToSend), name);
+    }
+
+    public boolean existsFile(String path){
+        try {
+            sendMessage("exists " + path);
+            String answer = receiveMessage();
+            if(answer.equals("yes"))
+                return true;
+            else
+                return false;
+        } catch (IOException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean isConnected() {

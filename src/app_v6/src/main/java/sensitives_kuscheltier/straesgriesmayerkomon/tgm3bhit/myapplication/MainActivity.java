@@ -1,11 +1,13 @@
 package sensitives_kuscheltier.straesgriesmayerkomon.tgm3bhit.myapplication;
 
 import android.app.Activity;
+import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +37,8 @@ public class MainActivity extends ActionBarActivity
     private ConnectFragment connection;
     private BabyfonFragment babyfon;
 
+    private ClientSocket clientSocket;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,10 +47,10 @@ public class MainActivity extends ActionBarActivity
         connection = new ConnectFragment();
         //audio = new AudioFragment(this);
         audio = new NewAudioFragment();
-        audio.setConnection(connection);
         babyfon = new BabyfonFragment();
-        babyfon.setConnection(connection);
         setContentView(R.layout.activity_main);
+
+        new ConnectSocketThread(clientSocket, "192.168.43.1", 5555).start();
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -56,6 +60,47 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+    }
+
+    public ClientSocket getClientSocket(){
+        return clientSocket;
+    }
+
+    public class ConnectSocketThread extends Thread {
+
+        private String ip;
+        private int port;
+        private ClientSocket socket;
+
+        public ConnectSocketThread(ClientSocket socket, String ip, int port) {
+            this.ip = ip;
+            this.port = port;
+            this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            Log.i("APP: ", "trying to connect to " + ip + "@" + port);
+            socket = new ClientSocket();
+            int success = socket.connect(ip, port);
+            clientSocket = socket;
+            if (success == ClientSocket.CONNECTED) {
+                Log.i("APP: ", "connection successfully established");
+                toastOnUiThread("Verbunden!", Toast.LENGTH_SHORT);
+            } else {
+                Log.i("APP: ", "connection failed");
+                toastOnUiThread("Verbinden fehlgeschlagen!", Toast.LENGTH_SHORT);
+            }
+        }
+
+        private void toastOnUiThread(final String msg, final int length){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), msg, length).show();
+                }
+            });
+        }
     }
 
     @Override

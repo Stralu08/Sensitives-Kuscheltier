@@ -59,7 +59,13 @@ class ServerSocket(object):
         """
         try:
             if decoded:
-                msg = self.connected_socket.recv(length).decode()
+                msg = ""
+                while True:
+                    char = self.connected_socket.recv(1).decode(encoding="UTF-8")
+                    if char != ";":
+                        msg += char
+                    else:
+                        break
                 logging.info("Message received: "+msg)
             else:
                 msg = self.connected_socket.recv(length)

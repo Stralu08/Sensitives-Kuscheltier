@@ -31,12 +31,16 @@ public class SoundArrayAdapter extends ArrayAdapter<Sound> {
         TextView name = (TextView) row.findViewById(R.id.audio_row_text);
         name.setText(values.get(position).toString());
         TextView state = (TextView) row.findViewById(R.id.audio_row_status_text);
-        if(values.get(position).isUploaded()) {
+        int synchState = values.get(position).getSynchState();
+        if(synchState == Sound.SYNCHED) {
             state.setText("[hochgeladen]");
             state.setTextColor(Color.GREEN);
-        } else {
+        } else if(synchState == Sound.NOT_SYNCHED){
             state.setText("[ausständig]");
             state.setTextColor(Color.RED);
+        } else if(synchState == Sound.UNCHECKABLE) {
+            state.setText("[nicht überprüfbar]");
+            state.setTextColor(Color.YELLOW);
         }
         //row.setBackgroundColor(Color.rgb((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255)));
         // ??? vielleicht, vielleicht auch nicht...

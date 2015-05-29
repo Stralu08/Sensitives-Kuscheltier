@@ -250,7 +250,8 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Verbindung zu 192.168.43.1:5555 aufbauen...", Toast.LENGTH_SHORT).show();
+            ((MainActivity)getActivity()).new ConnectSocketThread(((MainActivity)getActivity()).getClientSocket(), "192.168.43.1", 5555).start();
             return true;
         }
 
