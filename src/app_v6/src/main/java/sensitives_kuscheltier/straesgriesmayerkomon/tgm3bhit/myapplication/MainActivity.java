@@ -1,7 +1,5 @@
 package sensitives_kuscheltier.straesgriesmayerkomon.tgm3bhit.myapplication;
 
-import android.app.Activity;
-import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -10,13 +8,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
+import java.io.IOException;
 
+/**
+ * MainActivity class, holds all the Fragments, handles behavior on start and stop
+ */
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
@@ -32,56 +33,84 @@ public class MainActivity extends ActionBarActivity
 
     private HomeFragment home;
     private VideoFragment video;
-    //private AudioFragment audio;
     private NewAudioFragment audio;
-    private ConnectFragment connection;
     private BabyfonFragment babyfon;
 
     private ClientSocket clientSocket;
 
+    /**
+     * sets up fragments and tries to connect to server
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         home = new HomeFragment();
         video = new VideoFragment();
-        connection = new ConnectFragment();
-        //audio = new AudioFragment(this);
         audio = new NewAudioFragment();
         babyfon = new BabyfonFragment();
         setContentView(R.layout.activity_main);
-
-        new ConnectSocketThread(clientSocket, "192.168.43.1", 5555).start();
+        new ConnectSocketThread("192.168.43.1", 5555).start();
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
+    /**
+     * Called on stop of the activity:
+     * quits connection to server
+     */
+    @Override
+    protected void onStop() {
+        if(clientSocket!=null && clientSocket.isConnected()){
+            try{
+                clientSocket.destroy();
+                Log.i("APP: ", "closed current connection");
+            }catch (IOException e){
+                Log.i("APP: ", "failed to close current connection, maybe the connection was already closed?", e);
+            }
+        }
+        super.onStop();
+    }
+
+    /**
+     * Returns the ClientSocket
+     * @return clientSocket
+     */
     public ClientSocket getClientSocket(){
         return clientSocket;
     }
 
+    /**
+     * A Thread for establishing a new connection
+     */
     public class ConnectSocketThread extends Thread {
 
         private String ip;
         private int port;
-        private ClientSocket socket;
 
-        public ConnectSocketThread(ClientSocket socket, String ip, int port) {
+        /**
+         * Creates a new ConnectSocketThread instance for connection to given hostname and pprt
+         * @param ip the hostname or ip as string
+         * @param port the port
+         */
+        public ConnectSocketThread(String ip, int port) {
             this.ip = ip;
             this.port = port;
-            this.socket = socket;
         }
 
+        /**
+         * Tries to connect and sets the attribute of the activity
+         */
         @Override
         public void run() {
             Log.i("APP: ", "trying to connect to " + ip + "@" + port);
-            socket = new ClientSocket();
+            ClientSocket socket = new ClientSocket();
             int success = socket.connect(ip, port);
             clientSocket = socket;
             if (success == ClientSocket.CONNECTED) {
@@ -93,6 +122,11 @@ public class MainActivity extends ActionBarActivity
             }
         }
 
+        /**
+         * For posting toasts from another thread
+         * @param msg message to display
+         * @param length duration of display
+         */
         private void toastOnUiThread(final String msg, final int length){
             runOnUiThread(new Runnable() {
                 @Override
@@ -103,6 +137,10 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    /**
+     * Sets the fragment depending on the selected item in the list view of the fragment drawer.
+     * @param position
+     */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
@@ -132,15 +170,14 @@ public class MainActivity extends ActionBarActivity
                         .commit();
                 mTitle = getString(R.string.title_babyfon);
                 break;
-            case 4:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, connection)
-                        .commit();
-                mTitle = getString(R.string.title_connect);
-                break;
         }
     }
 
+    /**
+     * Sets title (displayed on the action bar) depending on the selected
+     * item in the list view of the fragment drawer.
+     * @param number
+     */
     public void onSectionAttached(int number) {
         switch (number) {
             case 0:
@@ -155,9 +192,6 @@ public class MainActivity extends ActionBarActivity
             case 3:
                 mTitle = getString(R.string.title_babyfon);
                 break;
-            case 4:
-                mTitle = getString(R.string.title_connect);
-                break;
         }
     }
 
@@ -167,7 +201,6 @@ public class MainActivity extends ActionBarActivity
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -182,90 +215,19 @@ public class MainActivity extends ActionBarActivity
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void onConnectClick(View v) {connection.connect();}
-
-    public void onWriteClick(View v) {
-        connection.write();
-    }
-
+    /**
+     * poorly implemented:
+     * Fragment to welcome the user:
+     * has only a placeholder imageview for the logo...
+     * planned: logo and a short description of the app and its function for the user, shown below
+     * the logo
+     */
     public static class HomeFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.layout_home, container, false);
             return rootView;
-        }
-    }
-
-    public static class VideoFragment extends Fragment {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.layout_video, container, false);
-            return rootView;
-        }
-    }
-
-    public void showToast(final String toast, final int length) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                Toast.makeText(MainActivity.this, toast, length).show();
-            }
-        });
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
 }

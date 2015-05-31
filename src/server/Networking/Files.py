@@ -39,33 +39,45 @@ def receive_file(name, server_socket, data_length):
     logging.info("closed file, transfer successful!")
 
 
-def send_file(name, server_socket, dir=DEFAULT_PHOTO_PATH):
-    to_send = open(name, DEFAULT_MODE)
-    logging.info("Opened file")
-    file_size = os.path.getsize(dir+"/"+name)
-    server_socket.send(str(file_size), encoded=True)
-    bytes_sent = 0
-    logging.info("Size: "+str(file_size))
-    while bytes_sent < file_size:
-        data = to_send.read(Server.ServerSocket.DEFAULT_DATA_PER_CHUNK)
-        logging.info("Current file position: "+str(to_send.tell()))
-        server_socket.send(data, encoded=False)
-        bytes_sent += len(data)
-    logging.info("Transfer completed!")
-    to_send.close()
-    logging.info("Closed file")
-
-
 def exists(path):
+    """
+    Checks if a file exists
+    :param path: path of file to check
+    :return: true if file exists false otherwise
+    """
     return os.path.isfile(path)
 
 
+def delete(path):
+    logging.info("deleting "+path+" ...")
+    os.remove(path)
+    logging.info("deleted "+path+"!")
+
+
+#### NOT USED because too less time
+#def send_file(name, server_socket, dir=DEFAULT_PHOTO_PATH):
+#    to_send = open(name, DEFAULT_MODE)
+#    logging.info("Opened file")
+#    file_size = os.path.getsize(dir+"/"+name)
+#    server_socket.send(str(file_size), encoded=True)
+#    bytes_sent = 0
+#    logging.info("Size: "+str(file_size))
+#    while bytes_sent < file_size:
+#        data = to_send.read(Server.ServerSocket.DEFAULT_DATA_PER_CHUNK)
+#        logging.info("Current file position: "+str(to_send.tell()))
+#        server_socket.send(data, encoded=False)
+#        bytes_sent += len(data)
+#    logging.info("Transfer completed!")
+#    to_send.close()
+#    logging.info("Closed file")
+
+# not really used too because it was not implemented on client side
 def list_files():
-    """ At the moment this method is not really useful!
-    Checks directory and returns the names of the files inside it.
-    :return: al list of all files in the sounds folder
     """
-    dir_list = os.listdir("C:\Users\Patrick\PycharmProjects\Networking\sound")
+    Checks directory and returns the names of the files inside it.
+    :return: a list of all files in the sounds folder
+    """
+    dir_list = os.listdir("sounds")
     dir_list_string = ""
     for entry in dir_list:
         dir_list_string += entry + ";"

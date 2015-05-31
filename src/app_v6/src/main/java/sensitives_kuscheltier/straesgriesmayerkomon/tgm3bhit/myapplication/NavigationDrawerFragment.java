@@ -1,5 +1,7 @@
 package sensitives_kuscheltier.straesgriesmayerkomon.tgm3bhit.myapplication;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -11,6 +13,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,8 +23,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -106,7 +113,6 @@ public class NavigationDrawerFragment extends Fragment {
                         getString(R.string.title_video),
                         getString(R.string.title_audio),
                         getString(R.string.title_babyfon),
-                        getString(R.string.title_connect),
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
@@ -243,19 +249,87 @@ public class NavigationDrawerFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    /**
+     * Handles clicks on items of the action bar option menu.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
-        if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(getActivity(), "Verbindung zu 192.168.43.1:5555 aufbauen...", Toast.LENGTH_SHORT).show();
-            ((MainActivity)getActivity()).new ConnectSocketThread(((MainActivity)getActivity()).getClientSocket(), "192.168.43.1", 5555).start();
+        //connects to the server
+        if (item.getItemId() == R.id.action_connect) {
+            Toast.makeText(getActivity(), "Verbindung aufbauen...", Toast.LENGTH_SHORT).show(); //move to strings.xml
+            ((MainActivity) getActivity()).new ConnectSocketThread("192.168.43.1", 5555).start();//fixed ip and port of the RPi
+            return true;
+        //disconnects from the server
+        } else if (item.getItemId() == R.id.action_disconnect) {
+            Toast.makeText(getActivity(), "Verbindung trennen...", Toast.LENGTH_SHORT).show();//move to strings.xml
+            new Thread() {
+                @Override
+                public void run() {
+                    ClientSocket socket = ((MainActivity) getActivity()).getClientSocket();
+                    try {
+                        if (socket != null && socket.isConnected()) {
+                            ((MainActivity) getActivity()).getClientSocket().destroy();
+                        }
+                    } catch (IOException e) {
+                        Log.e("APP: ", "couldn't send message for disconnecting from server", e);
+                    }
+                }
+            }.start();
+            return true;
+        //sends shutdown message to the server,
+        //could play smth. before shutting down, but too less time to implement it (bad time management :()
+        } else if (item.getItemId() == R.id.action_shutdown){
+            Log.i("APP: ", "Shutdown button pressed...");
+            dialogShutdown();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Creates a simple dialog if the shutdown item in the action bar option menu was clicked:
+     * ok for actually shutting down the connected server
+     * Abbrechen for canceling
+     */
+    public void dialogShutdown() {
+        LayoutInflater li = LayoutInflater.from(getActivity());
+        View promptsView = li.inflate(R.layout.layout_audio_dialog_v2, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(promptsView);
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        ClientSocket socket = ((MainActivity) getActivity()).getClientSocket();
+                                        try {
+                                            if (socket != null && socket.isConnected()) {
+                                                ((MainActivity) getActivity()).getClientSocket().sendMessage("shutdown");
+                                            }
+                                        } catch (IOException e) {
+                                            Log.e("APP: ", "couldn't send message for disconnecting from server", e);
+                                        }
+                                    }
+                                }.start();
+                                Toast.makeText(getActivity(), "Teddy herunterfahren...", Toast.LENGTH_SHORT).show(); //move to strings.xml
+                            }
+                        })
+                .setNegativeButton("Abbrechen", //move to strings.xml
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     /**

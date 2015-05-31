@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="173dp"
         android:layout_height="191dp"
-        android:id="@+id/imageView"
+        android:id="@+id/coverImage"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="114dp"
         android:src="@drawable/baer" />

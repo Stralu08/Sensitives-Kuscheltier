@@ -28,11 +28,11 @@ import java.util.List;
 
 /**
  * Created by Jakob on 16.03.2015.
- * not in use anymore :(
+ * NOT USED!!
  */
 public class AudioFragment extends Fragment implements View.OnTouchListener,AdapterView.OnItemClickListener{
 
-    private ConnectFragment connection;
+   // private ConnectFragment connection;
     private MediaPlayer mediaPlayer;
     private MediaRecorder recorder;
     private String OUTPUT_FILE;
@@ -45,10 +45,6 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
     private File dir;
     private File to;
     private ArrayAdapter<String> arrayAdapter;
-
-    public AudioFragment(Context context){
-        this.context=context;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,7 +64,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
     }
 
     /**
-     * Method to play a file.
+     * Method to play_selector a file.
      * @throws Exception
      */
     public void playRecording() throws Exception{
@@ -177,7 +173,7 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
     }
 
     /**
-     * OnTouch listener for the record Button.
+     * OnTouch listener for the record_selector Button.
      * @param v
      * @param event
      * @return
@@ -235,11 +231,11 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
                                 } else {
                                     renameFile(name);
                                     addList();
-                                    try {
-                                        connection.getClientSocket().sendFile(to, name);
+                                  /*  try {
+                                        //connection.getClientSocket().sendFile(to, name);
                                     }catch (Exception e){
                                         Toast.makeText(getActivity(), "Could not send File", Toast.LENGTH_SHORT).show();
-                                    }
+                                    }*/
                                 }
                             }
                         })
@@ -299,8 +295,8 @@ public class AudioFragment extends Fragment implements View.OnTouchListener,Adap
     //     Toast.makeText(getActivity(), ""+selectedItem, Toast.LENGTH_SHORT).show();
     }
 
-    public void setConnection(ConnectFragment connection){
+   /* public void setConnection(ConnectFragment connection){
         this.connection = connection;
-    }
+    }*/
 }
 

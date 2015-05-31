@@ -1,19 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/babyfon_start"
-        android:layout_gravity="center_horizontal" />
+    <EditText
+        android:layout_width="147dp"
+        android:layout_height="147dp"
+        android:inputType="numberSigned"
+        android:ems="4"
+        android:textSize="100sp"
+        android:maxLength="2"
+        android:id="@+id/record_duration"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@+id/start_record"
+        android:layout_alignLeft="@+id/start_record"
+        android:layout_alignStart="@+id/start_record"
+        android:layout_marginBottom="31dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop"
-        android:id="@+id/babyfon_stop" />
+    <ImageButton
+        android:layout_width="147dp"
+        android:layout_height="147dp"
+        android:id="@+id/start_record"
+        android:src="@drawable/record_selector"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
-</LinearLayout>
+    <ImageButton
+        android:layout_width="147dp"
+        android:layout_height="147dp"
+        android:id="@+id/playback_record"
+        android:src="@drawable/play_selector"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="31dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

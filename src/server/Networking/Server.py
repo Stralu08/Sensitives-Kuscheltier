@@ -5,7 +5,7 @@ import logging
 
 
 class ServerSocket(object):
-    """ ServerSocket is a wrapper-class for a socket.
+    """ ServerSocket is a wrapper-class for a server socket.
         A socket represents an end-point of a TCP connection. This class is
         (like the name already said) for the server side of this connection.
 
@@ -40,7 +40,7 @@ class ServerSocket(object):
         self.server.bind((hostname, port))
         logging.info("Bound server socket to "+hostname+"@"+str(port))
         self.server.listen(backlog)
-        logging.info("Backlog ('connection queue length)' set to "+str(backlog))
+        logging.info("Backlog ('connection queue length') set to "+str(backlog))
 
     def accept_connection(self):
         """ Accepts a connection of a client
@@ -90,5 +90,6 @@ class ServerSocket(object):
         Call, if object is not needed anymore
         :return: nothing
         """
-        self.connected_socket.close()
+        if self.connected_socket is not None:
+            self.connected_socket.close()
         self.server.close()

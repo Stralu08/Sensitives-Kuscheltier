@@ -6,11 +6,11 @@
     <string name="title_video">Teddys Augen</string>
     <string name="title_audio">Teddys Stimme</string>
     <string name="title_babyfon">Babyfon</string>
-    <string name="title_connect">Connect</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Connect</string>
-    <string name="action_settings">Settings</string>
+    <string name="connect">Verbinden</string>
+    <string name="disconnect">Verbindung trennen</string>
+    <string name="action_shutdown">Herunterfahren</string>
 
 </resources>
